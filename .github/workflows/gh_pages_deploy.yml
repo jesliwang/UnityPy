@@ -2,7 +2,35 @@ name: Build and Deploy
 on: [push]
 jobs:
   build-and-deploy:
-    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [
+          "ubuntu-latest",
+          "macOS-latest",
+          "windows-latest"
+        ]
+        python-version: [
+          "3.9",
+          "3.8",
+          "3.7",
+          "3.6",
+        ]
+        architecture: ["x86", "x64"]
+    
+    timeout-minutes: 30
+
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os }} ${{ matrix.architecture }} - ${{ matrix.python-version }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    
 
     steps:
 
